@@ -95,7 +95,6 @@ let update (msg: Msg) (model: Model): Model * Cmd<Msg> =
                                     x)
 
                     { GameState = Playing { game with Pokemons = pokemons } }, Cmd.none
-        | EndGame score -> { model with GameState = EndGame score }, Cmd.none
     | GameOver score -> { model with GameState = EndGame score }, Cmd.none
 
 open Fable.React
@@ -156,16 +155,32 @@ let view (model: Model) (dispatch: Msg -> unit) =
 
     match model.GameState with
     | StartScreen ->
-        Button.button [ Button.OnClick(fun _ -> StartClicked |> dispatch) ] [
-            str "Start"
+        Hero.hero [ Hero.IsFullHeight
+                    Hero.Props [ Style [ Background
+                                             """linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/d20d9193-3ffa-4a3a-915d-5312204873a7/d57lvld-b530ad43-7a5f-4be9-bd2b-0ffd9a83983d.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOiIsImlzcyI6InVybjphcHA6Iiwib2JqIjpbW3sicGF0aCI6IlwvZlwvZDIwZDkxOTMtM2ZmYS00YTNhLTkxNWQtNTMxMjIwNDg3M2E3XC9kNTdsdmxkLWI1MzBhZDQzLTdhNWYtNGJlOS1iZDJiLTBmZmQ5YTgzOTgzZC5qcGcifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6ZmlsZS5kb3dubG9hZCJdfQ.i5murD_hh7VxoNNDgB4W6SEGteWLAAv058ypRGBvVVU")""" ] ] ] [
+            Hero.body [] [
+                Columns.columns [ Columns.IsCentered
+                                  Columns.IsVCentered ] [
+                    Column.column [ Column.Width(Screen.All, Column.Is1) ] [
+                        Button.button [ Button.Size IsLarge
+                                        Button.Color IsPrimary
+                                        Button.OnClick(fun _ -> StartClicked |> dispatch) ] [
+                            str "Start"
+                        ]
+                    ]
+                ]
+            ]
         ]
 
     | Playing game ->
-        Hero.hero [ Hero.IsFullHeight
+        Hero.hero [ Hero.Color IsPrimary
+                    Hero.IsFullHeight
                     Hero.Props [ Style [ Background
                                              """linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("https://i.pinimg.com/originals/28/d0/23/28d0231a25fc8a7ee02a9081251c47bf.png")""" ] ] ] [
             Hero.head [] [
                 navBrand game.Score game.Lives
+            ]
+            Hero.body [] [
                 Container.container [] [
                     Column.column [] [
                         Columns.columns [ Columns.IsMultiline ] [
@@ -182,11 +197,22 @@ let view (model: Model) (dispatch: Msg -> unit) =
 
 
     | EndGame score ->
-        div [] [
-            Heading.h1 [ Heading.Modifiers [ Modifier.TextColor IsBlack ] ] [
-                str (score |> string)
-            ]
-            Button.button [ Button.OnClick(fun _ -> StartClicked |> dispatch) ] [
-                str "Restart"
+        Hero.hero [ Hero.IsFullHeight
+                    Hero.Props [ Style [ Background
+                                             """linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("https://ninfora.com/forums/uploads/monthly_2016_09/2d6eba2c-e254-4271-b7ca-25f5a96ef4e0.png.5c7faa57f79402eccf50c4cc2e47b0e0.png")""" ] ] ] [
+            Hero.body [] [
+                Columns.columns [ Columns.IsCentered
+                                  Columns.IsVCentered ] [
+                    Column.column [] [
+                        Heading.h1 [ Heading.Modifiers [ Modifier.TextColor IsBlack ] ] [
+                            str (sprintf "Score: %i" score)
+                        ]
+                        Button.button [ Button.Color IsDanger
+                                        Button.Size IsLarge
+                                        Button.OnClick(fun _ -> StartClicked |> dispatch) ] [
+                            str "Restart"
+                        ]
+                    ]
+                ]
             ]
         ]
