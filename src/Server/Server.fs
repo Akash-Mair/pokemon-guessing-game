@@ -161,23 +161,20 @@ type Storage() =
           (151, "Mew") ]
 
 
-    member __.CheckPokemon id name =
+    member __.CheckPokemon name =
         async {
             return
                 pokemons
-                |> List.tryFind (fun x -> fst x = id)
+                |> List.tryFind (fun x -> snd x = name)
                 |> function
                 | Some x ->
-                    match snd x with
-                    | pokemonName when (x |> snd) = name ->
-                        let (id, name) = x
+                    let (id, name) = x
 
-                        { Name = pokemonName
-                          Id = id
-                          ImageUrl =
-                              id
-                              |> sprintf "https://pokeres.bastionbot.org/images/pokemon/%i.png" }
-                    | _ -> failwith "Broke"
+                    { Name = name
+                      Id = id
+                      ImageUrl =
+                          id
+                          |> sprintf "https://pokeres.bastionbot.org/images/pokemon/%i.png" }
                 | None -> failwith "Couldnt find"
         }
 
@@ -185,7 +182,7 @@ let storage = Storage()
 
 
 let pokemonApi =
-    { CheckPokemon = fun (id, name) -> storage.CheckPokemon id name }
+    { CheckPokemon = fun name -> storage.CheckPokemon name }
 
 let webApp =
     Remoting.createApi ()

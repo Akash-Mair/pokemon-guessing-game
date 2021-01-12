@@ -2,9 +2,6 @@ namespace Shared
 
 open System
 
-
-
-
 module Route =
     let builder typeName methodName =
         sprintf "/api/%s/%s" typeName methodName
@@ -25,4 +22,4 @@ module Pokemon =
         { Id = id; Name = name; ImageUrl = url }
 
 type IPokemonApi =
-    { CheckPokemon: int * string -> Async<Pokemon> }
+    { CheckPokemon: string -> Async<Pokemon> }
