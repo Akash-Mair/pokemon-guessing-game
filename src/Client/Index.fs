@@ -9,15 +9,15 @@ type GameState =
     | StartScreen
     | Playing of Playing.Model
     | EndGame of EndGame.Model
+    | Won of Won.Model
 
 type Model = { GameState: GameState }
-
-
 
 type Msg =
     | PlayingMsg of Playing.Msg
     | StartMsg of Start.Msg
     | GameOverMsg of EndGame.Msg
+    | WonMsg of Won.Msg
 
 
 
@@ -33,13 +33,18 @@ let update (msg: Msg) (model: Model): Model * Cmd<Msg> =
         { GameState = Playing nextState }, nextCmd
 
     | PlayingMsg playingMsg, Playing game ->
-        match game.Lives with
-        | 1 ->
+        match game.Lives, game.Score with
+        | 1, _ ->
             let endModel = EndGame.init game.Score
 
             { model with
                   GameState = EndGame endModel },
             Cmd.none
+
+        | x, 151 ->
+            let wonModel = Won.init x
+            { model with GameState = Won wonModel }, Cmd.none
+
         | _ ->
             let playingModel, cmd = Playing.update playingMsg game
 
@@ -53,11 +58,13 @@ let update (msg: Msg) (model: Model): Model * Cmd<Msg> =
             let nextState, nextCmd = Playing.init ()
             { GameState = Playing nextState }, nextCmd
 
-    | _ -> model, Cmd.none
+    | WonMsg wonMsg, Won game ->
+        match wonMsg with
+        | Won.Restart ->
+            let nextState, nextCmd = Playing.init ()
+            { GameState = Playing nextState }, nextCmd
 
-open Fable.React
-open Fable.React.Props
-open Fulma
+    | _ -> model, Cmd.none
 
 
 let view (model: Model) (dispatch: Msg -> unit) =
@@ -68,3 +75,5 @@ let view (model: Model) (dispatch: Msg -> unit) =
     | Playing game -> Playing.view game (PlayingMsg >> dispatch)
 
     | EndGame score -> EndGame.view score (GameOverMsg >> dispatch)
+
+    | Won game -> Won.view game (WonMsg >> dispatch)

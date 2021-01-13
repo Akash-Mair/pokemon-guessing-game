@@ -10,6 +10,7 @@
     <Compile Include="Api.fs" />
     <Compile Include="pages/Start.fs" />
     <Compile Include="pages/EndGame.fs" />
+    <Compile Include="pages/Won.fs" />
     <Compile Include="pages/Playing.fs" />
     <Compile Include="Index.fs" />
     <Compile Include="App.fs" />
