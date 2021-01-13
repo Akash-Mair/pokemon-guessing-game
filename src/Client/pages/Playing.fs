@@ -141,7 +141,11 @@ let view (model: Model) (dispatch: Msg -> unit) =
                     ]
                     Control.p [] [
                         Button.a [ Button.Color IsPrimary
-                                   Button.OnClick(fun _ -> Submit |> dispatch) ] [
+                                   Button.Disabled(model.Input = "")
+                                   Button.OnClick
+                                       (fun _ ->
+                                           if model.Input <> "" then
+                                               Submit |> dispatch) ] [
                             str "Guess"
                         ]
                     ]
